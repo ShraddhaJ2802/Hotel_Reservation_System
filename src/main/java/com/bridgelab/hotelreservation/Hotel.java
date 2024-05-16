@@ -2,23 +2,28 @@ package com.bridgelab.hotelreservation;
 
 public class Hotel {
     private String name;
-    private  double regularRate;
+    private double regularRate;
 
-    public Hotel(String name ,double regularRate)
-    {
+    public Hotel(String name, double regularRate) {
         this.name = name;
         this.regularRate = regularRate;
     }
 
-    public Hotel(String name )
-    {
+    public Hotel(String name) {
         this.name = name;
     }
 
-    public static void main(String[] args) {
-
-        Hotel h1 = new Hotel("Lakewood" ,1500);
-        System.out.println("Hotel name is :" +h1.name+" and rate is "+ h1.regularRate);
-
+    public double getRegularRate() {
+        return regularRate;
     }
+
+    public void setRegularRate(double regularRate) {
+        this.regularRate = regularRate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
+
