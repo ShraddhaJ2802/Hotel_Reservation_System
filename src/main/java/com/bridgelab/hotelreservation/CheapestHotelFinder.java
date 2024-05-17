@@ -32,17 +32,18 @@ public class CheapestHotelFinder {
     }
 
     public String findCheapestHotelByWeekdayAndWeekendDay(String sd ,String ed) throws ParseException {
-        SimpleDateFormat dt = new SimpleDateFormat("ddMMyyyy");
-        Date start = dt.parse(sd);
-        Date end = dt.parse(ed);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/ dd/ yy");
+        Date start = dateFormat.parse(sd);
+        Date end = dateFormat.parse(ed);
 
         Calendar cal = Calendar.getInstance();
 
-        double minRate = Integer.MAX_VALUE;
+        int minRate = Integer.MAX_VALUE;
         String cheapestHotel = "";
+        int highestRating = 0;
 
         for (Hotel hotel : hotels) {
-            double totalRate = 0;
+            int totalRate = 0;
 
             for (Date date = start; !date.after(end); ) {
                 cal.setTime(date);
@@ -56,14 +57,14 @@ public class CheapestHotelFinder {
                 date = cal.getTime();
             }
 
-            if (totalRate < minRate) {
+            if (totalRate < minRate || (totalRate == minRate && hotel.getRating() > highestRating)) {
                 minRate = totalRate;
                 cheapestHotel = hotel.getName();
+                highestRating = hotel.getRating();
             }
         }
 
-        return cheapestHotel ;
-                //+ ", Total Rates: $" + minRate;
+        return cheapestHotel + ", Rating: " + highestRating + " and Total Rates: $" + minRate;
     }
 
 
@@ -75,8 +76,7 @@ public class CheapestHotelFinder {
         hotelList.add(new Hotel("Ridgewood" ,200));
 
         //Given date range
-        String startDate = "10Sep2020";
-        String endDate = "11Sep2020";
+
 
         //ctrating object of CheapestHotelFinder
        // CheapestHotelFinder finder =new CheapestHotelFinder(hotelList);
@@ -88,14 +88,17 @@ public class CheapestHotelFinder {
 
         // Sample hotel data with rates
         List<Hotel> hotelList = new ArrayList<>();
-        hotelList.add(new Hotel("Lakewood", 110, 90));
-        hotelList.add(new Hotel("Bridgewood", 150, 50));
-        hotelList.add(new Hotel("Ridgewood", 220, 150));
+        hotelList.add(new Hotel("Lakewood", 110, 90 ,3));
+        hotelList.add(new Hotel("Bridgewood", 150, 50, 4));
+        hotelList.add(new Hotel("Ridgewood", 220, 150,5));
 
         CheapestHotelFinder finder = new CheapestHotelFinder(hotelList);
 
+        String startDate = "10/ 11/ 20";
+        String endDate = "10/ 12/ 20";
+
         // Finding the cheapest hotel
-        String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay("11Sep2020", "12Sep2020");
+        String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
 
         System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
     }
