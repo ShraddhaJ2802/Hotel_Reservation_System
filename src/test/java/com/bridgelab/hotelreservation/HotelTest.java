@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,5 +51,29 @@ public class HotelTest {
      public void  testLakewoodWeekdayRate() {
         Hotel lakewood = new Hotel("lakewood", 110, 90);
         assertEquals(90 ,lakewood.getWeekdayRate());
+    }
+
+    @Test
+    void testFindCheapestHotel_LakewoodAndBridgewood() throws ParseException {
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(new Hotel("Lakewood", 110, 90));
+        hotels.add(new Hotel("Bridgewood", 150, 50));
+        hotels.add(new Hotel("Ridgewood", 220, 150));
+
+        CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
+        String cheapestHotel = finder.findCheapestHotel("11Sep2020", "12Sep2020");
+        assertEquals("Lakewood", cheapestHotel);
+    }
+
+    @Test
+    void testFindCheapestHotel_Lakewood() throws ParseException {
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(new Hotel("Lakewood", 110, 90));
+        hotels.add(new Hotel("Bridgewood", 150, 50));
+        hotels.add(new Hotel("Ridgewood", 220, 150));
+
+        CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
+        String cheapestHotel = finder.findCheapestHotel("10Sep2020", "11Sep2020");
+        assertEquals("Lakewood", cheapestHotel);
     }
 }
