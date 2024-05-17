@@ -95,4 +95,16 @@ public class HotelTest {
         String bestRatedHotel = finder.findBestRatedHotel("10/ 11/ 20", "10/ 12/ 20");
         assertEquals("Ridgewood, Rating: 5 and Total Rates: $370", bestRatedHotel);
     }
+
+    @Test
+    void testFindBestRatedHotelForRewardCustomer() throws ParseException {
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(new Hotel("Lakewood", 110, 90, 3, 80, 80));
+        hotels.add(new Hotel("Bridgewood", 150, 50, 4, 110, 50));
+        hotels.add(new Hotel("Ridgewood", 220, 150, 5, 100, 40));
+
+        CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
+        String bestHotel = finder.findBestRatedHotel("10/ 11/ 20", "10/ 12/ 20", true);
+        assertEquals("Lakewood & Total Rates $83", bestHotel);
+    }
 }

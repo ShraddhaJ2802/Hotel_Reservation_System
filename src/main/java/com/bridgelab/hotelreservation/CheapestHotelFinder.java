@@ -102,9 +102,50 @@ public class CheapestHotelFinder {
         }
 
         return bestRatedHotel + ", Rating: "+highestRating +" and Total Rates: $" + totalRate;
-        //"Ridgewood, Rating: 5 and Total Rates: $370"
     }
 
+    public String findBestRatedHotel(String startDate, String endDate, boolean isRewardCustomer) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/ dd/ yy");
+        Date start = dateFormat.parse(startDate);
+        Date end = dateFormat.parse(endDate);
+
+        Calendar cal = Calendar.getInstance();
+
+        int highestRating = 0;
+        String bestRatedHotel = "";
+        int totalRate = 0;
+
+        for (Hotel hotel : hotels) {
+            int currentHotelTotalRate = 0;
+            for (Date date = start; !date.after(end); ) {
+                cal.setTime(date);
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+                if (isRewardCustomer) {
+                    if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                        currentHotelTotalRate += hotel.getRewardWeekendRate();
+                    } else {
+                        currentHotelTotalRate += hotel.getRewardWeekdayRate();
+                    }
+                } else {
+                    if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                        currentHotelTotalRate += hotel.getWeekendRate();
+                    } else {
+                        currentHotelTotalRate += hotel.getWeekdayRate();
+                    }
+                }
+                cal.add(Calendar.DATE, 1);
+                date = cal.getTime();
+            }
+
+            if (hotel.getRating() > highestRating) {
+                highestRating = hotel.getRating();
+                bestRatedHotel = hotel.getName();
+                totalRate = currentHotelTotalRate;
+            }
+        }
+
+        return bestRatedHotel + " & Total Rates $" + totalRate;
+    }
 
 
     public static void main(String[] args) throws ParseException {
@@ -126,10 +167,16 @@ public class CheapestHotelFinder {
       //  System.out.println("Cheapest hotel for the given date range is:" + cheapHotel);*/
 
         // Sample hotel data with rates
-        List<Hotel> hotelList = new ArrayList<>();
+       /* List<Hotel> hotelList = new ArrayList<>();
         hotelList.add(new Hotel("Lakewood", 110, 90 ,3));
         hotelList.add(new Hotel("Bridgewood", 150, 50, 4));
-        hotelList.add(new Hotel("Ridgewood", 220, 150,5));
+        hotelList.add(new Hotel("Ridgewood", 220, 150,5));*/
+
+        List<Hotel> hotelList = List.of(
+                new Hotel("Lakewood", 110, 90, 3, 80, 80),
+                new Hotel("Bridgewood", 150, 50, 4, 110, 50),
+                new Hotel("Ridgewood", 220, 150, 5, 100, 40)
+        );
 
         CheapestHotelFinder finder = new CheapestHotelFinder(hotelList);
 
@@ -140,8 +187,10 @@ public class CheapestHotelFinder {
        // String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
       //  System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
 
-        String bestReatedHotel = finder.findBestRatedHotel(startDate, endDate);
-        System.out.println("Best Rated hotel for the given date range is: " + bestReatedHotel);
+        //String bestReatedHotel = finder.findBestRatedHotel(startDate, endDate);
+        //System.out.println("Best Rated hotel for the given date range is: " + bestReatedHotel);
+        String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,true);
+        System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
     }
 
     }
