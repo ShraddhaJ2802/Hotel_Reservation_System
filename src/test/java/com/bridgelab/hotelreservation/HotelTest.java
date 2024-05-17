@@ -66,14 +66,24 @@ public class HotelTest {
     }
 
     @Test
-    void testFindCheapestHotel_Lakewood() throws ParseException {
+    void testFindratings() throws ParseException {
+        Hotel lakewood = new Hotel("lakewood" , 110 ,90,3);
+        Hotel bridgewood = new Hotel("bridgewood" , 150 ,50, 4);
+        Hotel ridgewood = new Hotel("ridgewood" , 220 ,150, 5);
+
+        int rating =lakewood.getRating();
+        assertEquals(3, rating);
+    }
+
+    @Test
+    void testFind() throws ParseException {
         List<Hotel> hotels = new ArrayList<>();
-        hotels.add(new Hotel("Lakewood", 110, 90));
-        hotels.add(new Hotel("Bridgewood", 150, 50));
-        hotels.add(new Hotel("Ridgewood", 220, 150));
+        hotels.add(new Hotel("Lakewood", 110, 90, 3));
+        hotels.add(new Hotel("Bridgewood", 150, 50, 4));
+        hotels.add(new Hotel("Ridgewood", 220, 150, 5));
 
         CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
-        String cheapestHotel = finder.findCheapestHotel("10Sep2020", "11Sep2020");
-        assertEquals("Lakewood", cheapestHotel);
+        String cheapestHotel = finder.findCheapestHotel("11Sep2020", "12Sep2020");
+        assertEquals("Lakewood, Bridgewood, Total Rates: $200", cheapestHotel);
     }
 }
