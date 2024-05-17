@@ -67,6 +67,45 @@ public class CheapestHotelFinder {
         return cheapestHotel + ", Rating: " + highestRating + " and Total Rates: $" + minRate;
     }
 
+    public String findBestRatedHotel(String sd ,String ed) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/ dd/ yy");
+        Date start = dateFormat.parse(sd);
+        Date end = dateFormat.parse(ed);
+
+        Calendar cal = Calendar.getInstance();
+
+        int highestRating = 0;
+        String bestRatedHotel = "";
+        int totalRate = 0;
+
+
+        for (Hotel hotel : hotels) {
+            int currentHotelTotalRate = 0;
+
+            for (Date date = start; !date.after(end); ) {
+                cal.setTime(date);
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+                if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                    currentHotelTotalRate += hotel.getWeekendRate();
+                } else {
+                    currentHotelTotalRate += hotel.getWeekdayRate();
+                }
+                cal.add(Calendar.DATE, 1);
+                date = cal.getTime();
+            }
+
+            if (hotel.getRating() > highestRating) {
+                highestRating = hotel.getRating();
+                bestRatedHotel = hotel.getName();
+                totalRate = currentHotelTotalRate;
+            }
+        }
+
+        return bestRatedHotel + ", Rating: "+highestRating +" and Total Rates: $" + totalRate;
+        //"Ridgewood, Rating: 5 and Total Rates: $370"
+    }
+
+
 
     public static void main(String[] args) throws ParseException {
         // Sample hotel data with rates
@@ -98,9 +137,11 @@ public class CheapestHotelFinder {
         String endDate = "10/ 12/ 20";
 
         // Finding the cheapest hotel
-        String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
+       // String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
+      //  System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
 
-        System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
+        String bestReatedHotel = finder.findBestRatedHotel(startDate, endDate);
+        System.out.println("Best Rated hotel for the given date range is: " + bestReatedHotel);
     }
 
     }
