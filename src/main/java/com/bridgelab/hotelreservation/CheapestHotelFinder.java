@@ -23,7 +23,8 @@ public class CheapestHotelFinder {
                 cheapestHotel = hotel.getName();
             }
         }
-        return cheapestHotel +" , Total Rates : $" + minRate;
+        return cheapestHotel ;
+                //" , Total Rates : " + minRate;
     }
 
     public static void main(String[] args) {
