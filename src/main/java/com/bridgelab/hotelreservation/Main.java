@@ -2,7 +2,7 @@ package com.bridgelab.hotelreservation;
 
 public class Main {
     public static void main(String[] args) {
-        //Welcome Msg
+        //Welcome Msg //Welcome Msg
         System.out.println("Welcome to hotel reservation");
     }
 }
