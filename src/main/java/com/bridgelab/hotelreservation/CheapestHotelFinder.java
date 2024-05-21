@@ -104,16 +104,31 @@ public class CheapestHotelFinder {
         return bestRatedHotel + ", Rating: "+highestRating +" and Total Rates: $" + totalRate;
     }
 
-    public String findBestRatedHotel(String startDate, String endDate, boolean isRewardCustomer) throws ParseException {
+    public String findBestRatedHotel(String startDate, String endDate, String customerType) throws ParseException {
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/ dd/ yy");
         Date start = dateFormat.parse(startDate);
         Date end = dateFormat.parse(endDate);
+
+        try {
+            start = dateFormat.parse(startDate);
+            end = dateFormat.parse(endDate);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Please use ddMMMyyyy format.");
+        }
+
+        if (start.after(end)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
+
+
 
         Calendar cal = Calendar.getInstance();
 
         int highestRating = 0;
         String bestRatedHotel = "";
         int totalRate = 0;
+        boolean isRewardCustomer =  customerType.equalsIgnoreCase("Reward");
 
         for (Hotel hotel : hotels) {
             int currentHotelTotalRate = 0;
@@ -144,7 +159,7 @@ public class CheapestHotelFinder {
             }
         }
 
-        return bestRatedHotel + " & Total Rates $" + totalRate;
+        return bestRatedHotel + " & Total Rates $" + totalRate ;
     }
 
 
@@ -171,26 +186,37 @@ public class CheapestHotelFinder {
         hotelList.add(new Hotel("Lakewood", 110, 90 ,3));
         hotelList.add(new Hotel("Bridgewood", 150, 50, 4));
         hotelList.add(new Hotel("Ridgewood", 220, 150,5));*/
-
-        List<Hotel> hotelList = List.of(
-                new Hotel("Lakewood", 110, 90, 3, 80, 80),
-                new Hotel("Bridgewood", 150, 50, 4, 110, 50),
-                new Hotel("Ridgewood", 220, 150, 5, 100, 40)
-        );
-
-        CheapestHotelFinder finder = new CheapestHotelFinder(hotelList);
-
-        String startDate = "10/ 11/ 20";
-        String endDate = "10/ 12/ 20";
-
         // Finding the cheapest hotel
-       // String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
-      //  System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
+        // String cheapestHotel = finder.findCheapestHotelByWeekdayAndWeekendDay(startDate, endDate);
+        //  System.out.println("Cheapest hotel for the given date range is: " + cheapestHotel);
 
         //String bestReatedHotel = finder.findBestRatedHotel(startDate, endDate);
         //System.out.println("Best Rated hotel for the given date range is: " + bestReatedHotel);
-        String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,true);
-        System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
+        //String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,true);
+        // System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
+        try {
+            List<Hotel> hotelList = List.of(
+                    new Hotel("Lakewood", 110, 90, 3, 80, 80),
+                    new Hotel("Bridgewood", 150, 50, 4, 110, 50),
+                    new Hotel("Ridgewood", 220, 150, 5, 100, 40)
+            );
+
+            CheapestHotelFinder finder = new CheapestHotelFinder(hotelList);
+
+            String startDate = "10/ 11/ 20";
+            String endDate = "10/ 12/ 20";
+            String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,"Reward");
+            System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
+        }
+        catch (Exception e)
+        {
+            System.out.println( "Error:" +e.getMessage());
+
+        }
+
+
+
+
     }
 
     }
