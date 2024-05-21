@@ -2,13 +2,16 @@ package com.bridgelab.hotelreservation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class CheapestHotelFinder {
     private List<Hotel> hotels;
+    private static final Pattern DATE_PATTERN = Pattern.compile("\\d{2}[A-Za-z]{3}\\d{4}");
 
     public CheapestHotelFinder(List<Hotel> hotels) {
         this.hotels = hotels;
@@ -162,6 +165,50 @@ public class CheapestHotelFinder {
         return bestRatedHotel + " & Total Rates $" + totalRate ;
     }
 
+    public String findBestRatedHotel(String startDate, String endDate, boolean isRewardCustomer) throws IllegalArgumentException {
+        if (!DATE_PATTERN.matcher(startDate).matches() || !DATE_PATTERN.matcher(endDate).matches()) {
+            throw new IllegalArgumentException("Invalid date format. Please use ddMMMyyyy format.");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/ dd/ yy");
+
+        LocalDate start;
+        LocalDate end;
+        try {
+            start = LocalDate.parse(startDate, formatter);
+            end = LocalDate.parse(endDate, formatter);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Please use ddMMMyyyy format.");
+        }
+
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
+
+        return hotels.stream()
+                .map(hotel -> new HotelRate(hotel, calculateTotalRate(hotel, start, end, isRewardCustomer)))
+                .sorted(Comparator.comparing(HotelRate::getTotalRate)
+                        .thenComparing((hr1, hr2) -> Integer.compare(hr2.getHotel().getRating(), hr1.getHotel().getRating())))
+                .findFirst()
+                .map(hr -> hr.getHotel().getName() + ", Rating: " + hr.getHotel().getRating() + " and Total Rates: $" + hr.getTotalRate())
+                .orElseThrow(() -> new IllegalArgumentException("No hotels available."));
+    }
+
+    private int calculateTotalRate(Hotel hotel, LocalDate start, LocalDate end, boolean isRewardCustomer) {
+        int totalRate = 0;
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            DayOfWeek dayOfWeek = date.getDayOfWeek();
+            if (isRewardCustomer) {
+                totalRate += (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)
+                        ? hotel.getRewardWeekendRate() : hotel.getRewardWeekdayRate();
+            } else {
+                totalRate += (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)
+                        ? hotel.getWeekendRate() : hotel.getWeekdayRate();
+            }
+        }
+        return totalRate;
+    }
+
 
     public static void main(String[] args) throws ParseException {
         // Sample hotel data with rates
@@ -205,8 +252,11 @@ public class CheapestHotelFinder {
 
             String startDate = "10/ 11/ 20";
             String endDate = "10/ 12/ 20";
-            String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,"Reward");
-            System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
+
+                String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate, true);
+                System.out.println("Best rated hotel for the given date range is: " + bestRatedHotel);
+           // String bestRatedHotel = finder.findBestRatedHotel(startDate, endDate,"Reward");
+           // System.out.println("Special rates for reward customers  is: " + bestRatedHotel);
         }
         catch (Exception e)
         {

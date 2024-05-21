@@ -8,8 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HotelTest {
     Hotel h;
@@ -126,4 +125,20 @@ public class HotelTest {
             System.out.println(" "+e.getMessage());
         }
     }
+
+    @Test
+    void testInvalidDateFormat() {
+        List<Hotel> hotels = new ArrayList<>();
+        hotels.add(new Hotel("Lakewood", 110, 90, 3, 80, 80));
+        hotels.add(new Hotel("Bridgewood", 150, 50, 4, 110, 50));
+        hotels.add(new Hotel("Ridgewood", 220, 150, 5, 100, 40));
+
+        CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            finder.findBestRatedHotel("11-09-2020", "12-09-2020", true);
+        });
+
+        assertEquals("Invalid date format. Please use ddMMMyyyy format.", exception.getMessage());
+    }
+
 }
