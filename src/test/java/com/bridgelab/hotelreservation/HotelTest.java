@@ -118,7 +118,7 @@ public class HotelTest {
             hotels.add(new Hotel("Ridgewood", 220, 150, 5, 100, 40));
 
             CheapestHotelFinder finder = new CheapestHotelFinder(hotels);
-            String bestHotel = finder.findBestRatedHotel("10/ 11/ 20", "10/ 12/ 20", "Regular");
+            String bestHotel = finder.findBestRatedHotel("10/ 11/ 20", "10/ 12/ 20", "Reward");
             assertEquals("Lakewood & Total Rates $83", bestHotel);
         }
         catch (Exception e)
